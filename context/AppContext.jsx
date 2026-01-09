@@ -1,9 +1,10 @@
 'use client'
 import { productsDummyData, userDummyData } from "@/assets/assets";
 import { useAuth, useUser } from "@clerk/nextjs";
-import { headers } from "next/headers";
+// import { headers } from "next/headers";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export const AppContext = createContext();
 
@@ -39,10 +40,13 @@ export const AppContextProvider = (props) => {
 
         if (data.success) {
             setUserData(data.user)
+            setCartItems(data.user.cartItems)
+        }else {
+            toast.error(data.message)
         }
 
        } catch (error) {
-        
+        toast.error(error.message)
        }
     }
 
