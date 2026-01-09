@@ -4,6 +4,7 @@ import { useAuth, useUser } from "@clerk/nextjs";
 // import { headers } from "next/headers";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
+import axios from "axios"; // ✅
 import toast from "react-hot-toast";
 
 export const AppContext = createContext();
@@ -40,7 +41,7 @@ export const AppContextProvider = (props) => {
 
         if (data.success) {
             setUserData(data.user)
-            setCartItems(data.user.cartItems)
+            setCartItems(data.user.cartItems || {})
         }else {
             toast.error(data.message)
         }
@@ -87,8 +88,12 @@ export const AppContextProvider = (props) => {
 
     const getCartAmount = () => {
         let totalAmount = 0;
-        for (const items in cartItems) {
-            let itemInfo = products.find((product) => product._id === items);
+        for (const itemId in cartItems) {
+        const itemInfo = products.find(
+            (product) => product._id === itemId
+        );
+
+        if (!itemInfo) continue;
             if (cartItems[items] > 0) {
                 totalAmount += itemInfo.offerPrice * cartItems[items];
             }
