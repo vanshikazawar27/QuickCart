@@ -1,0 +1,2 @@
+- [ ] Edit app/api/user/data/route.js: Change "error.message" to error.message in the catch block.
+- [ ] Edit app/api/Product/add/route.js: Change image: images to images: images in the Product.create() call.

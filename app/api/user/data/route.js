@@ -19,6 +19,6 @@ export async function GET(request) {
         return NextResponse.json({ success: true, data: user })
 
     } catch (error) {
-        return NextResponse.json({ success: false, message: "error.message" })
+        return NextResponse.json({ success: false, message: error.message })
     }
 }
