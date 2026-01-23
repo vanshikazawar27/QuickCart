@@ -15,8 +15,12 @@ cloudinary.config({
 
 export async function POST(request) {
   try {
+
+    console.log("ADD PRODUCT HIT");
     // 1️⃣ Get user from Clerk cookie
-    const { userId } = auth();
+    const { userId } =  await auth();
+    console.log("USER ID:", userId);
+    console.log("USER ID:", auth());
 
     if (!userId) {
       return NextResponse.json(
@@ -27,6 +31,7 @@ export async function POST(request) {
 
     // 2️⃣ Check seller role
     const isSeller = await authSeller(userId);
+    console.log("IS SELLER:", isSeller);
     if (!isSeller) {
       return NextResponse.json(
         { success: false, message: "Only sellers can add products" },
@@ -67,6 +72,10 @@ export async function POST(request) {
       })
     );
 
+    console.log("UPLOADED IMAGES:",uploadedImages[0]);
+    console.log("UPLOADED IMAGES:",uploadedImages);
+    
+
     // 5️⃣ Save to DB
     await connectDB();
 
@@ -77,8 +86,8 @@ export async function POST(request) {
       category,
       price: Number(price),
       offerPrice: Number(offerPrice),
-      image: uploadedImages,
-      createdAt: new Date(),
+      images: uploadedImages,
+      date: new Date(),
     });
 
     // 6️⃣ Success response

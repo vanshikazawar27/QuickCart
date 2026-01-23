@@ -152,7 +152,7 @@ export const productsDummyData = [
     "_id": "67a1f52e3f34a77b6dde914a",
     "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
     "name": "Bose QuietComfort 45",
-    "description": "The Bose QuietComfort 45 headphones are engineered for exceptional sound quality and unparalleled noise cancellation. With a 24-hour battery life and comfortable, lightweight design, these headphones deliver premium audio for any environment. Whether on a flight, in the office, or at home, the Bose QC45 blocks out distractions, offering an immersive listening experience.",
+    "description": "c",
     "price": 429.99,
     "offerPrice": 329.99,
     "image": [

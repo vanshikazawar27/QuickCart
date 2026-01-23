@@ -27,6 +27,7 @@ const Product = () => {
     useEffect(() => {
         fetchProductData();
     }, [id, products.length])
+    console.log("productData",productData);
 
     return productData ? (<>
         <Navbar />
@@ -35,7 +36,7 @@ const Product = () => {
                 <div className="px-5 lg:px-16 xl:px-20">
                     <div className="rounded-lg overflow-hidden bg-gray-500/10 mb-4">
                         <Image
-                            src={mainImage || productData.image[0]}
+                            src={mainImage || productData.images[0]}
                             alt="alt"
                             className="w-full h-auto object-cover mix-blend-multiply"
                             width={1280}
@@ -44,7 +45,7 @@ const Product = () => {
                     </div>
 
                     <div className="grid grid-cols-4 gap-4">
-                        {productData.image.map((image, index) => (
+                        {productData.images.map((image, index) => (
                             <div
                                 key={index}
                                 onClick={() => setMainImage(image)}
