@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios"; // ✅
 import toast from "react-hot-toast";
+// import { Token } from "@clerk/nextjs/dist/types/server";
 
 export const AppContext = createContext();
 
@@ -18,7 +19,7 @@ export const AppContextProvider = (props) => {
     const currency = process.env.NEXT_PUBLIC_CURRENCY
     const router = useRouter()
 
-    const { user } = useUser()
+    const { user, isSignedIn } = useUser()
     const { getToken } = useAuth()
 
     const [products, setProducts] = useState([])
@@ -60,17 +61,65 @@ export const AppContextProvider = (props) => {
        }
     }
 
-    const addToCart = async (itemId) => {
+    const fetchCart = async () => {
+        try {
+            const token = await getToken()
+            const {data} = await axios.get('/api/user/data', { headers: { Authorization: `Bearer ${token}` } })
 
-        let cartData = structuredClone(cartItems);
-        if (cartData[itemId]) {
-            cartData[itemId] += 1;
+            if (data.success) {
+                setCartItems(data.user.cartItems || {})
+            }else {
+                toast.error(data.message)
+            }
+
+        } catch (error) {
+            toast.error(error.message)
         }
-        else {
-            cartData[itemId] = 1;
+    }
+
+    const addToCart = async (itemId) => {
+        try {
+            // Check if user is signed in
+            if (!isSignedIn) {
+                toast.error("Please sign in to add items to cart");
+                router.push('/sign-in');
+                return;
+            }
+
+            // Get the token for authentication
+            const token = await getToken();
+            if (!token) {
+                throw new Error("Authentication failed");
+            }
+            
+            // Update local state optimistically
+            const updatedCart = { ...cartItems };
+            updatedCart[itemId] = (updatedCart[itemId] || 0) + 1;
+            setCartItems(updatedCart);
+
+            // Update server
+            const response = await axios.post(
+                '/api/cart/update',
+                { cartData: updatedCart },
+                {
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                }
+            );
+
+            if (response.data.success) {
+                toast.success('Item added to cart');
+            } else {
+                throw new Error('Failed to update cart');
+            }
+        } catch (error) {
+            console.error('Add to cart error:', error);
+            toast.error(error.response?.data?.message || 'Failed to add item to cart');
+            // Revert to server state on error
+            fetchCart();
         }
-        setCartItems(cartData);
-        toast.success('Item added to cart')
     }
 
     const updateCartQuantity = async (itemId, quantity) => {
@@ -82,7 +131,15 @@ export const AppContextProvider = (props) => {
             cartData[itemId] = quantity;
         }
         setCartItems(cartData)
-
+        if (user) {
+            try {
+                const token = await getToken()
+                await axios.post('/api/cart/update', { cartData }, { headers: { Authorization: `Bearer ${token}` } })
+                toast.success('Cart Updated')
+            }catch (error) {
+                toast.error(error.message)
+            }
+        }
     }
 
     const getCartCount = () => {
