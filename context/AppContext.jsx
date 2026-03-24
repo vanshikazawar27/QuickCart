@@ -50,8 +50,9 @@ export const AppContextProvider = (props) => {
         const {data} = await axios.get('/api/user/data', { headers: { Authorization: `Bearer ${token}` } })
 
         if (data.success) {
-            setUserData(data.user)
-            setCartItems(data.user.cartItems || {})
+            const userInfo = data.data || {}
+            setUserData(userInfo)
+            setCartItems(userInfo.cartItems || {})
         }else {
             toast.error(data.message)
         }
@@ -67,7 +68,8 @@ export const AppContextProvider = (props) => {
             const {data} = await axios.get('/api/user/data', { headers: { Authorization: `Bearer ${token}` } })
 
             if (data.success) {
-                setCartItems(data.user.cartItems || {})
+                const userInfo = data.data || {}
+                setCartItems(userInfo.cartItems || {})
             }else {
                 toast.error(data.message)
             }
