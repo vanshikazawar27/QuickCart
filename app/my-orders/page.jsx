@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from "react";
-import { assets, orderDummyData } from "@/assets/assets";
+import { assets } from "@/assets/assets";
 import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
 import Footer from "@/components/Footer";
@@ -15,8 +15,19 @@ const MyOrders = () => {
     const [loading, setLoading] = useState(true);
 
     const fetchOrders = async () => {
-        setOrders(orderDummyData)
-        setLoading(false);
+        try {
+            const response = await fetch('/api/Order/list');
+            const data = await response.json();
+            if (data.success) {
+                setOrders(data.data);
+            } else {
+                console.error(data.message);
+            }
+        } catch (error) {
+            console.error('Error fetching orders:', error);
+        } finally {
+            setLoading(false);
+        }
     }
 
     useEffect(() => {

@@ -13,10 +13,13 @@ export async function POST(request) {
         if (!address || items.length === 0) {
             return NextResponse.json({ success: false, message: "Invalid data" });
         }
-       const amount = await items.reduce(async(acc, item) => {
+
+        // calculate amount using items
+        let amount = 0;
+        for (const item of items) {
             const product = await Product.findById(item.product);
-            return acc + product.offerPrice * item.quantity;
-       },0)
+            amount += product.offerPrice * item.quantity;
+        }
 
        await inngest.send({
         name: 'order/created',
