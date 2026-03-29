@@ -16,7 +16,7 @@ export async function GET(request) {
 
         await connectDB();
 
-        const orders = await Order.find({ userId }).populate('items.product').populate('address').sort({ date: -1 });
+        const orders = await Order.find({ userId }).populate('items.product').sort({ date: -1 });
 
         return NextResponse.json({ success: true, data: orders });
 

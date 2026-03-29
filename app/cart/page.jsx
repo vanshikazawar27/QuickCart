@@ -51,7 +51,7 @@ const Cart = () => {
                         <div>
                           <div className="rounded-lg overflow-hidden bg-gray-500/10 p-2">
                             <Image
-                              src={product?.image?.[0] || "/placeholder.png"}
+                              src={product?.images?.[0] || "/placeholder.png"}
                               alt={product.name || "Product"}
                               className="w-16 h-auto object-cover mix-blend-multiply"
                               width={1280}

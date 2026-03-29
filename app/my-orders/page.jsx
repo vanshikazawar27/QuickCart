@@ -44,10 +44,15 @@ const MyOrders = () => {
                         {orders.map((order, index) => (
                             <div key={index} className="flex flex-col md:flex-row gap-5 justify-between p-5 border-b border-gray-300">
                                 <div className="flex-1 flex gap-5 max-w-80">
+                                    {console.log('ORDER DEBUG:', order)}
                                     <Image
                                         className="max-w-16 max-h-16 object-cover"
-                                        src={assets.box_icon}
-                                        alt="box_icon"
+                                        src={
+                                            order.items[0]?.product?.images && order.items[0].product.images.length > 0
+                                                ? order.items[0].product.images[0]
+                                                : assets.box_icon
+                                        }
+                                        alt={order.items[0]?.product?.name || "product image"}
                                     />
                                     <p className="flex flex-col gap-3">
                                         <span className="font-medium text-base">
