@@ -26,6 +26,9 @@ export async function POST(request) {
       // Create new user if doesn't exist
       user = new User({
         _id: userId,
+        name: '',
+        email: '',
+        imageUrl: '',
         cartItems: {}
       });
     }

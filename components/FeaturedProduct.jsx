@@ -25,27 +25,30 @@ const products = [
 
 const FeaturedProduct = () => {
   return (
-    <div className="mt-14">
-      <div className="flex flex-col items-center">
-        <p className="text-3xl font-medium">Featured Products</p>
-        <div className="w-28 h-0.5 bg-orange-600 mt-2"></div>
+    <div className="mt-24 space-y-12">
+      <div className="flex flex-col items-center gap-2">
+        <h2 className="section-title">Featured Collections</h2>
+        <div className="w-16 h-1 bg-primary rounded-full"></div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-14 mt-12 md:px-14 px-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:px-16 px-6">
         {products.map(({ id, image, title, description }) => (
-          <div key={id} className="relative group">
+          <div key={id} className="relative group overflow-hidden rounded-3xl aspect-[4/5] cursor-pointer shadow-premium">
             <Image
               src={image}
               alt={title}
-              className="group-hover:brightness-75 transition duration-300 w-full h-auto object-cover"
+              className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
             />
-            <div className="group-hover:-translate-y-4 transition duration-300 absolute bottom-8 left-8 text-white space-y-2">
-              <p className="font-medium text-xl lg:text-2xl">{title}</p>
-              <p className="text-sm lg:text-base leading-5 max-w-60">
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent flex flex-col justify-end p-8 space-y-3">
+              <p className="text-white font-bold text-2xl lg:text-3xl leading-tight transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                {title}
+              </p>
+              <p className="text-slate-200 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 max-w-[240px]">
                 {description}
               </p>
-              <button className="flex items-center gap-1.5 bg-orange-600 px-4 py-2 rounded">
-                Buy now <Image className="h-3 w-3" src={assets.redirect_icon} alt="Redirect Icon" />
+              <button className="flex items-center gap-2 w-fit px-6 py-2.5 bg-white text-slate-900 font-bold rounded-full text-sm transform translate-y-8 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-200 hover:bg-primary hover:text-white">
+                Shop Now
+                <Image className="h-4 w-4" src={assets.redirect_icon} alt="icon" />
               </button>
             </div>
           </div>

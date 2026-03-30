@@ -2,18 +2,60 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-    scroll-behavior: smooth;
+:root {
+  --background: #ffffff;
+  --foreground: #0f172a; /* Slate 900 */
+  --primary: #f97316; /* Orange 500 */
+  --primary-hover: #ea580c; /* Orange 600 */
+  --secondary: #64748b; /* Slate 500 */
+  --accent: #f8fafc; /* Slate 50 */
+  --border: #e2e8f0; /* Slate 200 */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.3);
 }
 
 @layer base {
-    input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-orange-100 selection:text-orange-900;
   }
 
-::-webkit-scrollbar {
-  display: none;
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 }
+
+@layer components {
+  .glassmorphism {
+    @apply backdrop-blur-md bg-white/70 border-b border-white/20;
+  }
+
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-8 py-3 bg-primary text-white font-medium rounded-full transition-all duration-300 hover:bg-primary-hover hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-orange-500/20;
+  }
+
+  .section-title {
+    @apply text-3xl md:text-4xl font-bold text-slate-900 tracking-tight text-center;
+  }
+}
+
+* {
+  scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-50;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-full hover:bg-slate-400 transition-colors;
+}

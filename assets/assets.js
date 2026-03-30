@@ -186,7 +186,7 @@ export const productsDummyData = [
     "image": [
       "https://raw.githubusercontent.com/avinashdm/gs-images/main/quickcart/hdfi4u3fmprazpnrnaga.webp"
     ],
-    "category": "Earphone",
+    "category": "Accessories",
     "date": 1738667417511,
     "__v": 0
   },

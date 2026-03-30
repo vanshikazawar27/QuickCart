@@ -5,6 +5,17 @@ import { auth } from "@clerk/nextjs/server";
 import { v2 as cloudinary } from "cloudinary";
 import { NextResponse } from "next/server";
 
+import { z } from "zod";
+
+// Zod schema for product validation
+const productSchema = z.object({
+  name: z.string().min(3, "Name must be at least 3 characters"),
+  description: z.string().min(10, "Description must be at least 10 characters"),
+  category: z.string().min(1, "Category is required"),
+  price: z.preprocess((val) => Number(val), z.number().positive("Price must be positive")),
+  offerPrice: z.preprocess((val) => Number(val), z.number().min(0, "Offer price cannot be negative")),
+});
+
 // Cloudinary config
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -15,12 +26,8 @@ cloudinary.config({
 
 export async function POST(request) {
   try {
-
-    console.log("ADD PRODUCT HIT");
     // 1️⃣ Get user from Clerk cookie
-    const { userId } =  await auth();
-    console.log("USER ID:", userId);
-    console.log("USER ID:", auth());
+    const { userId } = await auth();
 
     if (!userId) {
       return NextResponse.json(
@@ -30,8 +37,7 @@ export async function POST(request) {
     }
 
     // 2️⃣ Check seller role
-    const isSeller = await authSeller(userId);
-    console.log("IS SELLER:", isSeller);
+    const isSeller = await authSeller();
     if (!isSeller) {
       return NextResponse.json(
         { success: false, message: "Only sellers can add products" },
@@ -39,15 +45,27 @@ export async function POST(request) {
       );
     }
 
-    // 3️⃣ Read form data
+    // 3️⃣ Read and validate form data
     const formData = await request.formData();
-    const name = formData.get("name");
-    const description = formData.get("description");
-    const category = formData.get("category");
-    const price = formData.get("price");
-    const offerPrice = formData.get("offerPrice");
-    const files = formData.getAll("images");
 
+    const data = {
+      name: formData.get("name"),
+      description: formData.get("description"),
+      category: formData.get("category"),
+      price: formData.get("price"),
+      offerPrice: formData.get("offerPrice"),
+    };
+
+    // Validate with Zod
+    const validation = productSchema.safeParse(data);
+    if (!validation.success) {
+      return NextResponse.json(
+        { success: false, message: validation.error.errors[0].message },
+        { status: 400 }
+      );
+    }
+
+    const files = formData.getAll("images");
     if (!files || files.length === 0) {
       return NextResponse.json(
         { success: false, message: "At least one image required" },
@@ -72,22 +90,14 @@ export async function POST(request) {
       })
     );
 
-    console.log("UPLOADED IMAGES:",uploadedImages[0]);
-    console.log("UPLOADED IMAGES:",uploadedImages);
-    
-
     // 5️⃣ Save to DB
     await connectDB();
 
     const newProduct = await Product.create({
       userId,
-      name,
-      description,
-      category,
-      price: Number(price),
-      offerPrice: Number(offerPrice),
+      ...validation.data,
       images: uploadedImages,
-      date: new Date(),
+      date: Date.now(),
     });
 
     // 6️⃣ Success response
@@ -98,10 +108,10 @@ export async function POST(request) {
     });
 
   } catch (error) {
-    console.error("ADD PRODUCT ERROR:", error);
     return NextResponse.json(
       { success: false, message: error.message },
       { status: 500 }
     );
   }
 }
+

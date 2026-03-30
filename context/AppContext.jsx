@@ -26,6 +26,9 @@ export const AppContextProvider = (props) => {
     const [userData, setUserData] = useState(false)
     const [isSeller, setIsSeller] = useState(true)
     const [cartItems, setCartItems] = useState({})
+    const [search, setSearch] = useState('')
+    const [showSearch, setShowSearch] = useState(false)
+    const [wishlist, setWishlist] = useState([])
 
     const fetchProductData = async () => {
         try {
@@ -42,7 +45,7 @@ export const AppContextProvider = (props) => {
 
     const fetchUserData = async () => {
        try {
-         if (user.publicMetadata.role === 'seller'){
+         if (user?.publicMetadata?.role === 'seller'){
             setIsSeller(true)
         }
 
@@ -53,6 +56,7 @@ export const AppContextProvider = (props) => {
             const userInfo = data.data || {}
             setUserData(userInfo)
             setCartItems(userInfo.cartItems || {})
+            setWishlist(userInfo.wishlist || [])
         }else {
             toast.error(data.message)
         }
@@ -176,6 +180,41 @@ export const AppContextProvider = (props) => {
         
     }, [user])
 
+    const toggleWishlist = async (productId) => {
+        if (!user) {
+            toast.error("Please sign in to save favorites");
+            router.push('/sign-in');
+            return;
+        }
+
+        let updatedWishlist = [...wishlist];
+        
+        if (wishlist.includes(productId)) {
+            updatedWishlist = updatedWishlist.filter(id => id !== productId);
+            setWishlist(updatedWishlist);
+            toast.success("Removed from wishlist");
+        } else {
+            updatedWishlist.push(productId);
+            setWishlist(updatedWishlist);
+            toast.success("Added to wishlist");
+        }
+
+        try {
+            const token = await getToken();
+            if (!token) {
+                toast.error("Authentication failed. Please sign in again.");
+                setWishlist(wishlist); // Revert on auth failure
+                return;
+            }
+            await axios.post('/api/user/wishlist', { wishlist: updatedWishlist }, { headers: { Authorization: `Bearer ${token}` } });
+        } catch (error) {
+            console.error("Error syncing wishlist:", error);
+            toast.error("Failed to sync wishlist with database");
+            // Revert the local state on error
+            setWishlist(wishlist);
+        }
+    }
+
     const value = {
         user, getToken,
         currency, router,
@@ -184,7 +223,11 @@ export const AppContextProvider = (props) => {
         products, fetchProductData,
         cartItems, setCartItems,
         addToCart, updateCartQuantity,
-        getCartCount, getCartAmount
+        getCartCount, getCartAmount,
+        search, setSearch,
+        showSearch, setShowSearch,
+        wishlist, setWishlist,
+        toggleWishlist
     }
 
     return (

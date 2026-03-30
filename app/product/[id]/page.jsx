@@ -14,7 +14,7 @@ const Product = () => {
 
     const { id } = useParams();
 
-    const { products, router, addToCart } = useAppContext()
+    const { products, router, addToCart, wishlist, toggleWishlist } = useAppContext()
 
     const [mainImage, setMainImage] = useState(null);
     const [productData, setProductData] = useState(null);
@@ -114,10 +114,24 @@ const Product = () => {
                     </div>
 
                     <div className="flex items-center mt-10 gap-4">
-                        <button onClick={() => addToCart(productData._id)} className="w-full py-3.5 bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition">
+                        <button 
+                            onClick={() => toggleWishlist(productData._id)}
+                            className={`p-3.5 rounded-full border transition-all duration-300 ${
+                                wishlist.includes(productData._id) 
+                                    ? 'bg-red-500 border-red-500 text-white' 
+                                    : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50'
+                            }`}
+                        >
+                            <Image
+                                className={`h-5 w-5 ${wishlist.includes(productData._id) ? 'invert' : ''}`}
+                                src={assets.heart_icon}
+                                alt="wishlist"
+                            />
+                        </button>
+                        <button onClick={() => addToCart(productData._id)} className="flex-1 py-3.5 bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition">
                             Add to Cart
                         </button>
-                        <button onClick={() => { addToCart(productData._id); router.push('/cart') }} className="w-full py-3.5 bg-orange-500 text-white hover:bg-orange-600 transition">
+                        <button onClick={() => { addToCart(productData._id); router.push('/cart') }} className="flex-1 py-3.5 bg-orange-500 text-white hover:bg-orange-600 transition">
                             Buy now
                         </button>
                     </div>

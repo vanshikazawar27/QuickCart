@@ -44,9 +44,9 @@ const HeaderSlider = () => {
   };
 
   return (
-    <div className="overflow-hidden relative w-full">
+    <div className="overflow-hidden relative w-full mt-6 rounded-2xl shadow-elevated">
       <div
-        className="flex transition-transform duration-700 ease-in-out"
+        className="flex transition-transform duration-1000 ease-[cubic-bezier(0.4, 0, 0.2, 1)]"
         style={{
           transform: `translateX(-${currentSlide * 100}%)`,
         }}
@@ -54,46 +54,53 @@ const HeaderSlider = () => {
         {sliderData.map((slide, index) => (
           <div
             key={slide.id}
-            className="flex flex-col-reverse md:flex-row items-center justify-between bg-[#E6E9F2] py-8 md:px-14 px-5 mt-6 rounded-xl min-w-full"
+            className="flex flex-col-reverse md:flex-row items-center justify-between bg-gradient-to-br from-[#f8fafc] to-[#e2e8f0] py-12 md:py-20 md:px-20 px-8 min-w-full"
           >
-            <div className="md:pl-8 mt-10 md:mt-0">
-              <p className="md:text-base text-orange-600 pb-1">{slide.offer}</p>
-              <h1 className="max-w-lg md:text-[40px] md:leading-[48px] text-2xl font-semibold">
+            <div className="md:w-1/2 mt-12 md:mt-0 text-left">
+              <p className="inline-block px-4 py-1.5 bg-orange-100 text-orange-600 rounded-full text-xs font-bold tracking-wider uppercase mb-4 animate-fade-in">
+                {slide.offer}
+              </p>
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-slate-900 leading-[1.1] mb-6 animate-fade-up">
                 {slide.title}
               </h1>
-              <div className="flex items-center mt-4 md:mt-6 ">
-                <button className="md:px-10 px-7 md:py-2.5 py-2 bg-orange-600 rounded-full text-white font-medium">
+              <div className="flex flex-wrap items-center gap-4 mt-8">
+                <button className="btn-primary animate-fade-up [animation-delay:200ms]">
                   {slide.buttonText1}
                 </button>
-                <button className="group flex items-center gap-2 px-6 py-2.5 font-medium">
+                <button className="group flex items-center gap-2 px-8 py-3 font-semibold text-slate-700 hover:text-primary transition-all duration-300 animate-fade-up [animation-delay:400ms]">
                   {slide.buttonText2}
-                  <Image className="group-hover:translate-x-1 transition" src={assets.arrow_icon} alt="arrow_icon" />
+                  <Image className="group-hover:translate-x-2 transition-transform duration-300" src={assets.arrow_icon} alt="arrow_icon" />
                 </button>
               </div>
             </div>
-            <div className="flex items-center flex-1 justify-center">
-              <Image
-                className="md:w-72 w-48"
-                src={slide.imgSrc}
-                alt={`Slide ${index + 1}`}
-              />
+            <div className="md:w-1/2 flex items-center justify-center animate-fade-in [animation-delay:300ms]">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-colors duration-500"></div>
+                <Image
+                  className="relative z-10 w-64 md:w-[400px] drop-shadow-2xl hover:scale-105 transition-transform duration-700 cursor-pointer"
+                  src={slide.imgSrc}
+                  alt={`Slide ${index + 1}`}
+                />
+              </div>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="flex items-center justify-center gap-2 mt-8">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3">
         {sliderData.map((_, index) => (
-          <div
+          <button
             key={index}
             onClick={() => handleSlideChange(index)}
-            className={`h-2 w-2 rounded-full cursor-pointer ${
-              currentSlide === index ? "bg-orange-600" : "bg-gray-500/30"
+            className={`h-1.5 transition-all duration-500 rounded-full ${
+              currentSlide === index ? "w-10 bg-primary" : "w-4 bg-slate-300 hover:bg-slate-400"
             }`}
-          ></div>
+             aria-label={`Go to slide ${index + 1}`}
+          ></button>
         ))}
       </div>
     </div>
+
   );
 };
 

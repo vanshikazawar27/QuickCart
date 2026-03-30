@@ -8,7 +8,7 @@ import { useAppContext } from "@/context/AppContext";
 
 const Cart = () => {
 
-  const { products, router, cartItems, addToCart, updateCartQuantity, getCartCount } = useAppContext();
+  const { products, router, cartItems, addToCart, updateCartQuantity, getCartCount, wishlist, toggleWishlist } = useAppContext();
 
   return (
     <>
@@ -48,7 +48,7 @@ const Cart = () => {
                   return (
                     <tr key={itemId}>
                       <td className="flex items-center gap-4 py-4 md:px-4 px-1">
-                        <div>
+                        <div className="relative">
                           <div className="rounded-lg overflow-hidden bg-gray-500/10 p-2">
                             <Image
                               src={product?.images?.[0] || "/placeholder.png"}
@@ -58,6 +58,18 @@ const Cart = () => {
                               height={720}
                             />
                           </div>
+                          {/* Wishlist heart icon */}
+                          <button
+                            onClick={(e) => { e.stopPropagation(); toggleWishlist(product._id); }}
+                            className={`absolute top-2 right-2 p-1 rounded-full shadow-sm transition-all duration-300 ${wishlist.includes(product._id) ? 'bg-red-500 text-white' : 'bg-white/80 backdrop-blur-sm hover:bg-white text-slate-900 shadow-sm'}`}
+                            title={wishlist.includes(product._id) ? 'Remove from wishlist' : 'Add to wishlist'}
+                          >
+                            <Image
+                              className={`h-4 w-4 ${wishlist.includes(product._id) ? 'invert' : ''}`}
+                              src={assets.heart_icon}
+                              alt="heart_icon"
+                            />
+                          </button>
                           <button
                             className="md:hidden text-xs text-orange-600 mt-1"
                             onClick={() => updateCartQuantity(product._id, 0)}
